@@ -49,10 +49,10 @@ def my_form_post():
 
             db.commit()
             db.close()
-            response = output + to_num_ + " added to queue\n<br>"
+            response = response + to_num_ + " added to queue\n<br>"
         else:
             logging.info(f'{to_num_} is not a valid number')
-            response =  output + to_num_ + ": is not a valid number<br>"
+            response =  response + to_num_ + ": is not a valid number<br>"
 
     return response
 
