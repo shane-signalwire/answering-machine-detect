@@ -24,7 +24,7 @@ def my_form_post():
     for num in numbers:
         #TODO: validate that the number is a valid e164 number
         # Put each number in the Database
-        db = sqlite3.connect("/tmp/database.db")
+        db = sqlite3.connect("database.db")
         cursor = db.cursor()
 
         to_num_ = num

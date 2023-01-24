@@ -14,7 +14,7 @@ class CustomConsumer(Consumer):
 
   async def ready(self):
     logging.info('Dialer App Consumer Ready')
-    db = sqlite3.connect("/tmp/database.db")
+    db = sqlite3.connect("database.db")
     cursor = db.cursor()
 
     # Create the dialto table if it doesn't exist
