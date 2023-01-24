@@ -7,6 +7,7 @@ import requests
 import sqlite3
 import re
 import os
+import logging
 from flask import Flask
 from flask import request
 from flask import render_template
