@@ -5,6 +5,7 @@ from signalwire.voice_response import *
 import urllib.parse
 import requests
 import sqlite3
+import re
 import os
 from flask import Flask
 from flask import request
@@ -19,22 +20,41 @@ def my_form():
 
 @amd.route('/', methods=['POST'])
 def my_form_post():
+    response = ""
     from_num_ = os.environ.get('FROM_NUMBER', None)
     numbers = str.split(request.form['text'])
+
+    phone_num_regex = re.compile(r'^\+1\d{10}$')
+    good_num = phone_num_regex.search(from_num_)
+
+    if good_num is None:
+        response = "The from number is not valid"
+        return response
+
+    # Put each number in the database for dialier pickup
     for num in numbers:
-        #TODO: validate that the number is a valid e164 number
-        # Put each number in the Database
         db = sqlite3.connect("/app/storage/database.db")
         cursor = db.cursor()
 
         to_num_ = num
-        cursor.execute(
-            "INSERT INTO dialto (to_num, from_num) VALUES (?, ?)",
-            (to_num_, from_num_,)
-        )
 
-        db.commit()
-    return numbers
+        phone_num_regex = re.compile(r'^\+1\d{10}$')
+        good_num = phone_num_regex.search(to_num_)
+
+        if good_num is not None:
+            cursor.execute(
+              "INSERT INTO dialto (to_num, from_num) VALUES (?, ?)",
+              (to_num_, from_num_,)
+            )
+
+            db.commit()
+            db.close()
+            response = output + to_num_ + " added to queue\n<br>"
+        else:
+            logging.info(f'{to_num_} is not a valid number')
+            response =  output + to_num_ + ": is not a valid number<br>"
+
+    return response
 
 if __name__ == '__main__':
     amd.run()
