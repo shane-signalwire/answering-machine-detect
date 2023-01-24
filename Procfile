@@ -1,1 +1,1 @@
-web: gunicorn run:amd
+web: gunicorn run: amd
