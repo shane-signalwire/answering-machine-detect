@@ -22,8 +22,8 @@ def my_form():
 @amd.route('/', methods=['POST'])
 def my_form_post():
     response = ""
-    from_num_ = os.environ.get('FROM_NUMBER', None)
-    numbers = str.split(request.form['text'])
+    #from_num_ = os.environ.get('FROM_NUMBER', None)
+    from_num_ = request.form.get("fnum")
 
     phone_num_regex = re.compile(r'^\+1\d{10}$')
     good_num = phone_num_regex.search(from_num_)
@@ -31,6 +31,9 @@ def my_form_post():
     if good_num is None:
         response = "The from number is not valid"
         return response
+
+
+    numbers = str.split(request.form['dest_list'])
 
     # Put each number in the database for dialier pickup
     for num in numbers:
