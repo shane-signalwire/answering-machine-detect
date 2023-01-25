@@ -18,6 +18,21 @@ amd = Flask(__name__)
 def my_form():
     return render_template('my-form.html')
 
+@amd.route('/logs' methods=['POST'])
+def my_form_post():
+    response=""
+    db = sqlite3.connect("/app/storage/database.db")
+    cursor = db.cursor()
+
+    rows = cursor.execute(
+        "SELECT to_num, from_num, amd_response from dialto where amd_response is not null order by id desc limit 25"
+    ).fetchall()
+
+    response="    ID     |  Dialed Number  |  Calling Number |  AMD result<br>+++++++++++++++++++++++++++++++++++++++<br>"
+    for i, d, c, a in rows:
+        response=response + str(i) + "  |  " + str(d) + "  |  " + str(c) + "  |  " + str(a) + "<br>"
+
+    return response
 
 @amd.route('/', methods=['POST'])
 def my_form_post():

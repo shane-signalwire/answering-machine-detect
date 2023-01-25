@@ -21,7 +21,8 @@ class CustomConsumer(Consumer):
     dialto_table = """ CREATE TABLE if not exists dialto (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         to_num TEXT NOT NULL,
-        from_num TEXT NOT NULL
+        from_num TEXT NOT NULL,
+        amd_response TEXT
         );"""
 
     cursor.execute(dialto_table)
@@ -32,7 +33,7 @@ class CustomConsumer(Consumer):
         from_num = ""
 
         results = cursor.execute(
-            "SELECT id, to_num, from_num from dialto limit 1"
+            "SELECT id, to_num, from_num from dialto where amd_response is null limit 1"
         ).fetchall()
 
         # TODO: Turn off logging to save disk/memory space
@@ -46,20 +47,23 @@ class CustomConsumer(Consumer):
                 to_num = t
                 from_num = f
 
-            # "pop" the record from the database; i.e. delete record once it's been processed.
-            # NOTE:  could make it so that the record gets updated with some kind of flag to show processing, then there is a log of numbers dialed, timestamp, and status
-            cursor.execute(
-                "DELETE FROM dialto where id = ?",
-                (id,)
-            )
-            db.commit()
-
             logging.info(f'{to_num}: Dialing destination number')
             dial_result = await self.client.calling.dial(to_number=to_num, from_number=from_num)
             if dial_result.successful is False:
                 logging.info(f'{to_num}: Outboud call failed.')
-
+                cursor.execute(
+                    "UPDATE dialto set amd_result = \"call failed\" where id = ?",
+                    (id,)
+                )
+                
             amd = await dial_result.call.amd(wait_for_beep=True)
+            # "pop" the record from the database; i.e. update the record with the amd result.
+            amd_result = amd.result
+            cursor.execute(
+                "UPDATE dialto set amd_result = ? where id = ?",
+                (amd_result, id,)
+            )
+            db.commit()
 
             if amd.successful and amd.result =='MACHINE':
                 logging.info(f'{to_num}: {amd.result}')
