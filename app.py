@@ -25,10 +25,10 @@ def my_log_post():
     cursor = db.cursor()
 
     rows = cursor.execute(
-        "SELECT to_num, from_num, amd_response from dialto where amd_response is not null order by id desc limit 25"
+        "SELECT to_num, from_num, amd_result from dialto where amd_response is not null order by id desc limit 25"
     ).fetchall()
 
-    response="    ID     |  Dialed Number  |  Calling Number |  AMD result<br>+++++++++++++++++++++++++++++++++++++++<br>"
+    response="    ID     |  Dialed Number  |  Calling Number |  AMD Result<br>+++++++++++++++++++++++++++++++++++++++<br>"
     for i, d, c, a in rows:
         response=response + str(i) + "  |  " + str(d) + "  |  " + str(c) + "  |  " + str(a) + "<br>"
 

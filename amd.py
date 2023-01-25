@@ -22,7 +22,7 @@ class CustomConsumer(Consumer):
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         to_num TEXT NOT NULL,
         from_num TEXT NOT NULL,
-        amd_response TEXT
+        amd_result TEXT
         );"""
 
     cursor.execute(dialto_table)
