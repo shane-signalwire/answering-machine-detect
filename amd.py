@@ -35,7 +35,7 @@ class CustomConsumer(Consumer):
             "SELECT id, to_num, from_num from dialto limit 1"
         ).fetchall()
 
-        # TODO: Turn this off to save disk/memory space
+        # TODO: Turn off logging to save disk/memory space
         if len(results) == 0:
             logging.info ('nothing to do')
             time.sleep(3)
@@ -46,32 +46,35 @@ class CustomConsumer(Consumer):
                 to_num = t
                 from_num = f
 
-            # "POP" record the database
+            # "pop" the record from the database; i.e. delete record once it's been processed.
+            # NOTE:  could make it so that the record gets updated with some kind of flag to show processing, then there is a log of numbers dialed, timestamp, and status
             cursor.execute(
                 "DELETE FROM dialto where id = ?",
                 (id,)
             )
             db.commit()
 
+            logging.info(f'{to_num}: Dialing destination number')
             dial_result = await self.client.calling.dial(to_number=to_num, from_number=from_num)
             if dial_result.successful is False:
-                logging.info('Outboud call failed.')
+                logging.info(f'{to_num}: Outboud call failed.')
 
             amd = await dial_result.call.amd(wait_for_beep=True)
-            logging.info(f'AMD Result: {amd.result}')
 
             if amd.successful and amd.result =='MACHINE':
+                logging.info(f'{to_num}: {amd.result}'
+                logging.info(f'{to_num}: Leaving Voicemail'
                 await dial_result.call.play_tts(text='Sorry we missed you.  We will call back later!')
 
             if amd.successful and amd.result == 'HUMAN':
-                # If we detect a HUMAN, say hello and play an audio file.
+                logging.info(f'{to_num}: {amd.result}'
+                logging.info(f'{to_num}: Playing Message to user'
+                await dial_result.call.play_tts(text='This is a company calling you back.  Placing you in the queue for an agent')
                 agent_dest = self.project = os.environ.get('AGENT_DEST', None)
                 devices = [
                   { 'to_number': agent_dest, 'timeout': 15 }
                 ]
                 await dial_result.call.connect(device_list=devices)
-                #await dial_result.call.play_tts(text='need something here for now')
-
 
             #await dial_result.call.hangup()
             #logging.info('The call has hung up')
