@@ -67,8 +67,8 @@ class CustomConsumer(Consumer):
                 await dial_result.call.play_tts(text='Sorry we missed you.  We will call back later!')
 
             if amd.successful and amd.result == 'HUMAN':
-                logging.info(f'{to_num}: {amd.result}'
-                logging.info(f'{to_num}: Playing Message to user'
+                logging.info(f'{to_num}: {amd.result}')
+                logging.info(f'{to_num}: Playing Message to user')
                 await dial_result.call.play_tts(text='This is a company calling you back.  Placing you in the queue for an agent')
                 agent_dest = self.project = os.environ.get('AGENT_DEST', None)
                 devices = [
