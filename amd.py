@@ -62,8 +62,8 @@ class CustomConsumer(Consumer):
             amd = await dial_result.call.amd(wait_for_beep=True)
 
             if amd.successful and amd.result =='MACHINE':
-                logging.info(f'{to_num}: {amd.result}'
-                logging.info(f'{to_num}: Leaving Voicemail'
+                logging.info(f'{to_num}: {amd.result}')
+                logging.info(f'{to_num}: Leaving Voicemail')
                 await dial_result.call.play_tts(text='Sorry we missed you.  We will call back later!')
 
             if amd.successful and amd.result == 'HUMAN':
