@@ -33,7 +33,7 @@ class CustomConsumer(Consumer):
         from_num = ""
 
         results = cursor.execute(
-            "SELECT id, to_num, from_num from dialto where amd_response is null limit 1"
+            "SELECT id, to_num, from_num from dialto where amd_result is null limit 1"
         ).fetchall()
 
         # TODO: Turn off logging to save disk/memory space
