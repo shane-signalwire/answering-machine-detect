@@ -18,8 +18,8 @@ amd = Flask(__name__)
 def my_form():
     return render_template('my-form.html')
 
-@amd.route('/logs' methods=['POST'])
-def my_form_post():
+@amd.route('/logs', methods=['POST'])
+def my_log_post():
     response=""
     db = sqlite3.connect("/app/storage/database.db")
     cursor = db.cursor()
