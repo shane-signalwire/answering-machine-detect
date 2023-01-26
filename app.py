@@ -25,7 +25,7 @@ def my_log_post():
     cursor = db.cursor()
 
     rows = cursor.execute(
-        "SELECT to_num, from_num, amd_result from dialto where amd_response is not null order by id desc limit 25"
+        "SELECT to_num, from_num, amd_result from dialto where amd_result is not null order by id desc limit 25"
     ).fetchall()
 
     response="    ID     |  Dialed Number  |  Calling Number |  AMD Result<br>+++++++++++++++++++++++++++++++++++++++<br>"
